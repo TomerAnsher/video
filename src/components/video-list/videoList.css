@@ -1,0 +1,42 @@
+.video-container {
+    padding: 10px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  
+.end-message {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.2rem;
+    color: gray;
+  }
+  
+  
+.infinite-scroll {
+    flex-grow: 1;
+    padding-right: 5px;
+    max-height: 100vh;  
+    min-height: 75vh;
+  }
+  
+  
+  .infinite-scroll::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .infinite-scroll::-webkit-scrollbar-thumb {
+    background: #007bff;
+    border-radius: 10px;
+  }
+  
+  
+.video-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  

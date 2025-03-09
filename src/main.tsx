@@ -9,17 +9,13 @@ import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App2 />
+    <MoviesWarrper />
   </StrictMode>,
 )
 
 
-
-
-
-export default function App2() {
+export default function MoviesWarrper() {
 const queryClient = new QueryClient();
-
    return (
      <QueryClientProvider client={queryClient}>
        <App />

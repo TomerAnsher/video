@@ -1,22 +1,37 @@
 .header-panel {
-    background: #ffffff;
+    background: #007bff;
     padding: 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    color: white;
   }
   
   .header-panel h2 {
     margin: 0;
-    color: #007bff;
   }
   
   .header-panel input,
   .header-panel select {
     padding: 8px;
     font-size: 16px;
-    border: 1px solid #ddd;
+    border: none;
     border-radius: 4px;
+    margin: 0 10px;
   }
   
+  .header-panel select {
+    background: white;
+    color: black;
+    cursor: pointer;
+  }
+
+  .multi-select {
+  width: 100%;
+  max-width: 300px;
+  min-height: 40px;
+  max-height: 40px;
+  overflow: hidden;
+}

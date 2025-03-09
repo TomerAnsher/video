@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 
 import { useVideos } from "./hooks/useGetVideos";
-import { Genre, Video, } from "./types/types";
+import { Video, Genre } from "./types/types";
 import { ClipLoader } from "react-spinners";
 import "./App.css";
 import HeaderPanel from "./components/header-panel/header-panel";
@@ -11,7 +11,7 @@ function App() {
   const { data, fetchNextPage, hasNextPage, isLoading, isError } = useVideos();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedYear, setSelectedYear] = useState<string>("");
-  const [selectedGenre, setSelectedGenre] = useState<string>("");
+  const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
 
   const allVideos: Video[] = useMemo(
     () => data?.pages?.flatMap((page) => page.videos) || [],
@@ -23,17 +23,24 @@ function App() {
     [allVideos]
   );
 
-  const genres:Genre = useMemo(() => data?.pages?.[0]?.genres ?? {}, [data]);
+  const genres: Genre = useMemo(() => data?.pages?.[0]?.genres ?? {}, [data]);
+
+  const handleGenreChange = (selectedGenreIds: number[]) => {
+    setSelectedGenres(selectedGenreIds);
+  };
 
   const filteredVideos = allVideos.filter((video) => {
-    return (
-      (searchQuery === "" ||
-        video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        video.artist.toLowerCase().includes(searchQuery.toLowerCase())) &&
-      (selectedYear === "" || video.release_year.toString() === selectedYear) &&
-      (selectedGenre === "" || video.genre_id === Number(selectedGenre))
-    );
+    const isMatchingSearch = searchQuery === "" ||
+      video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      video.artist.toLowerCase().includes(searchQuery.toLowerCase());
+  
+    const isMatchingYear = selectedYear === "" || video.release_year.toString() === selectedYear;
+  
+    const isMatchingGenre = selectedGenres.length === 0 || selectedGenres.includes(video.genre_id);
+  
+    return isMatchingSearch && isMatchingYear && isMatchingGenre;
   });
+  
 
   if (isLoading)
     return (
@@ -50,7 +57,7 @@ function App() {
       <HeaderPanel
         onSearch={setSearchQuery}
         onYearChange={setSelectedYear}
-        onGenreChange={setSelectedGenre}
+        onGenreChange={handleGenreChange}
         years={years}
         genres={genres}
       />
