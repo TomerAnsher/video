@@ -1,7 +1,15 @@
 import { useMemo, useState } from "react";
-import Select, { MultiValue } from "react-select";
+import { TextField, MenuItem, Select, InputLabel, FormControl, OutlinedInput, SelectChangeEvent } from "@mui/material";
 import "./HeaderPanel.css";
 import { Genre } from "../../types/types";
+
+const MenuProps = {
+  PaperProps: {
+    style: {
+      width: 300,
+    },
+  },
+};
 
 export type HeaderPanelProps = {
   onSearch: (query: string) => void;
@@ -14,74 +22,73 @@ export type HeaderPanelProps = {
 const HeaderPanel: React.FC<HeaderPanelProps> = ({ onSearch, onYearChange, onGenreChange, years, genres }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
-  const [selectedGenres, setSelectedGenres] = useState<{ label: string; value: number }[]>([]);
+  const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
 
   const genreOptions = useMemo(
     () => Object.entries(genres).map(([id, name]) => ({ value: Number(id), label: name })),
     [genres]
   );
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value;
     setSearchTerm(query);
     onSearch(query);
   };
 
-  const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const year = e.target.value;
+  const handleYearChange = (event: SelectChangeEvent<string>) => {
+    const year = event.target.value;
     setSelectedYear(year);
     onYearChange(year);
   };
 
-  const handleGenreChange = (newValue: MultiValue<{ label: string; value: number }>) => {
-    const selectedArray = [...newValue]; 
-    setSelectedGenres(selectedArray);
-    onGenreChange(selectedArray.map((genre) => genre.value));
+  const handleGenreChange = (event: SelectChangeEvent<number[]>) => {
+    const { target: { value } } = event;
+    const selectedValues = typeof value === "string" ? value.split(",").map(Number) : value;
+    setSelectedGenres(selectedValues);
+    onGenreChange(selectedValues);
   };
 
   return (
-    <div className="header-panel">
-      <h2>Video Browser</h2>
+    <div>
+      <div className="center-flex">
+        <h3>Video Browser</h3>
+      </div>
+      <div className="center-flex" style={{ gap: '12px' }}>
+        <TextField
+          label="Search by title or artist"
+          variant="outlined"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          sx={{ width: 300 }}
+        />
 
-      <input
-        type="text"
-        placeholder="Search by title or artist..."
-        value={searchTerm}
-        onChange={handleSearchChange}
-      />
+        <FormControl sx={{ width: 300 }}>
+          <InputLabel>Select Year</InputLabel>
+          <Select value={selectedYear} onChange={handleYearChange} label="Select Year">
+            <MenuItem value="">None</MenuItem>
+            {years.map((year) => (
+              <MenuItem key={year} value={year}>{year}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-      <select value={selectedYear} onChange={handleYearChange}>
-        <option value="">Select Year</option>
-        {years.map((year) => (
-          <option key={year} value={year}>
-            {year}
-          </option>
-        ))}
-      </select>
-
-      <Select
-        isMulti
-        options={genreOptions}
-        value={selectedGenres}
-        onChange={handleGenreChange}
-        placeholder="Select Genres..."
-        className="multi-select"
-        styles={{
-          control: (base) => ({
-            ...base,
-            minHeight: "40px",
-            maxHeight: "40px",
-            overflow: "hidden",
-          }),
-          valueContainer: (base) => ({
-            ...base,
-            maxHeight: "40px",
-            overflowY: "auto",
-          }),
-          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-        }}
-        menuPortalTarget={document.body}
-      />
+        <FormControl sx={{ width: 300 }}>
+          <InputLabel>Select Genres</InputLabel>
+          <Select
+            multiple
+            value={selectedGenres}
+            onChange={handleGenreChange}
+            input={<OutlinedInput label="Select Genres" />}
+            MenuProps={MenuProps}
+          >
+            {genreOptions.map((genre) => (
+              <MenuItem key={genre.value} value={genre.value}>
+                {genre.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </div>
     </div>
   );
 };
